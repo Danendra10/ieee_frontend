@@ -1,53 +1,57 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Map from "../components/Map";
 import Table from "../components/Table";
 
-interface TableRow {
-    no: number;
+interface DataElement {
     Time: string;
     Lat: number;
     Lng: number;
 }
 
-const ozon_table: TableRow[] = [
-    {
-        no: 1,
-        Time: "2023-09-09 12:00:00",
-        Lat: -7.277349,
-        Lng: 112.796642,
-    },
-    {
-        no: 2,
-        Time: "2023-09-09 12:00:00",
-        Lat: -7.279266,
-        Lng: 112.797847,
-    },
-    {
-        no: 3,
-        Time: "2023-09-09 12:00:00",
-        Lat: -7.277349,
-        Lng: 112.797947,
-    },
-    {
-        no: 4,
-        Time: "2023-09-09 12:00:00",
-        Lat: -7.277349,
-        Lng: 112.796747,
-    },
-    {
-        no: 5,
-        Time: "2023-09-09 12:00:00",
-        Lat: -7.277349,
-        Lng: 112.796647,
-    },
-];
+interface RequestReturn {
+    created_at: string;
+    lat: number;
+    lng: number;
+}
 
 const Ozon = () => {
     const [toggleView, setToggleView] = useState("map");
+    const [Ozon, setOzon] = useState<DataElement[]>([])
+
+    const url: string = "http://localhost:" + (import.meta.env.VITE_BACKEND_PORT as string) +
+        (import.meta.env.VITE_AIR_POLUTION_END_POINT as string)
+
+    const FetchOzon = () => {
+        fetch(url, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "type": "o3",
+            },
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                const newData: DataElement[] = data.data.map((element: RequestReturn) => {
+                    return {
+                        Time: element.created_at,
+                        Lat: element.lat,
+                        Lng: element.lng,
+                    };
+                });
+                setOzon(newData);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    };
+
+    useEffect(() => {
+        FetchOzon()
+    }, [])
     return (
         <div className="h-full flex flex-col">
-            <Header title="Ozon" />
+            <Header title="Ozon (O3)" />
             <div id="toggle" className="flex gap-x-2 mt-48 absolute z-10 left-[42%]
              border-[#1534E6] border-4 text-white w-fit rounded-full px-1 py-1 bg-white bg-opacity-50">
                 <button
@@ -68,8 +72,9 @@ const Ozon = () => {
                     TABLE
                 </button>
             </div>
-            {toggleView === "map" ? <Map data={ozon_table} /> : null}
-            {toggleView === "table" ? <Table table_data={ozon_table} /> : null}
+            {toggleView === "map" && Ozon.length ? <Map data={Ozon} /> : null}
+            {toggleView === "table" && Ozon.length ? <Table data={Ozon} /> : null}
+            {Ozon.length < 1 ? <h1 className="text-3xl font-bold underline mt-80 text-center">No Data</h1> : null}
         </div>
     )
 }

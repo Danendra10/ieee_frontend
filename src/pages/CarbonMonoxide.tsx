@@ -3,69 +3,53 @@ import Header from "../components/Header";
 import Map from "../components/Map";
 import Table from "../components/Table";
 
-interface TableRow {
-    no: number;
+interface DataElement {
     Time: string;
     Lat: number;
     Lng: number;
 }
 
-const carbon_monoxide: TableRow[] = [
-    {
-        no: 1,
-        Time: "2023-09-09 12:00:00",
-        Lat: -7.277349,
-        Lng: 112.796642,
-    },
-    {
-        no: 2,
-        Time: "2023-09-09 12:00:00",
-        Lat: -7.279266,
-        Lng: 112.797847,
-    },
-    {
-        no: 3,
-        Time: "2023-09-09 12:00:00",
-        Lat: -7.277349,
-        Lng: 112.797947,
-    },
-    {
-        no: 4,
-        Time: "2023-09-09 12:00:00",
-        Lat: -7.277349,
-        Lng: 112.796747,
-    },
-    {
-        no: 5,
-        Time: "2023-09-09 12:00:00",
-        Lat: -7.277349,
-        Lng: 112.796647,
-    },
-];
+interface RequestReturn {
+    created_at: string;
+    lat: number;
+    lng: number;
+}
 
 const CarbonMonoxide = () => {
     const [toggleView, setToggleView] = useState("map");
-    // get "PORT" from env
+    const [carbonMonoxide, setCarbonMonoxide] = useState<DataElement[]>([])
+
     const url: string = "http://localhost:" + (import.meta.env.VITE_BACKEND_PORT as string) +
         (import.meta.env.VITE_AIR_POLUTION_END_POINT as string)
-    console.log(url)
+
     const FetchCarbonMonoxide = () => {
         fetch(url, {
             method: "GET",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
+                "type": "co",
             },
         })
-            .then(response => response.json()).then(data => {
-                console.log(data)
-            }).catch(error => {
-                console.error(error)
+            .then((response) => response.json())
+            .then((data) => {
+                const newData: DataElement[] = data.data.map((element: RequestReturn) => {
+                    return {
+                        Time: element.created_at,
+                        Lat: element.lat,
+                        Lng: element.lng,
+                    };
+                });
+                setCarbonMonoxide(newData);
             })
-    }
+            // .then(() => { console.log("carbon: ", carbonMonoxide); })
+            .catch((error) => {
+                console.error(error);
+            });
+    };
 
     useEffect(() => {
         FetchCarbonMonoxide()
-    })
+    }, [])
     return (
         <div className="h-full flex flex-col">
             <Header title="Carbon Monoxide (CO)" />
@@ -89,8 +73,9 @@ const CarbonMonoxide = () => {
                     TABLE
                 </button>
             </div>
-            {toggleView === "map" ? <Map data={carbon_monoxide} /> : null}
-            {toggleView === "table" ? <Table table_data={carbon_monoxide} /> : null}
+            {toggleView === "map" && carbonMonoxide.length ? <Map data={carbonMonoxide} /> : null}
+            {toggleView === "table" && carbonMonoxide.length ? <Table data={carbonMonoxide} /> : null}
+            {carbonMonoxide.length < 1 ? <h1 className="text-3xl font-bold underline">No Data</h1> : null}
         </div>
     )
 }

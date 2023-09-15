@@ -1,50 +1,54 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Map from "../components/Map";
 import Table from "../components/Table";
 
-interface TableRow {
-    no: number;
+interface DataElement {
     Time: string;
     Lat: number;
     Lng: number;
 }
 
-const carbon_dioxide: TableRow[] = [
-    {
-        no: 1,
-        Time: "2023-09-09 12:00:00",
-        Lat: -7.277349,
-        Lng: 112.796642,
-    },
-    {
-        no: 2,
-        Time: "2023-09-09 12:00:00",
-        Lat: -7.279266,
-        Lng: 112.797847,
-    },
-    {
-        no: 3,
-        Time: "2023-09-09 12:00:00",
-        Lat: -7.277349,
-        Lng: 112.797947,
-    },
-    {
-        no: 4,
-        Time: "2023-09-09 12:00:00",
-        Lat: -7.277349,
-        Lng: 112.796747,
-    },
-    {
-        no: 5,
-        Time: "2023-09-09 12:00:00",
-        Lat: -7.277349,
-        Lng: 112.796647,
-    },
-];
+interface RequestReturn {
+    created_at: string;
+    lat: number;
+    lng: number;
+}
 
 const CarbonDioxide = () => {
     const [toggleView, setToggleView] = useState("map");
+    const [carbonDioxide, setCarbonDioxide] = useState<DataElement[]>([])
+
+    const url: string = "http://localhost:" + (import.meta.env.VITE_BACKEND_PORT as string) +
+        (import.meta.env.VITE_AIR_POLUTION_END_POINT as string)
+
+    const FetchCarbonDioxide = () => {
+        fetch(url, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "type": "co2",
+            },
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                const newData: DataElement[] = data.data.map((element: RequestReturn) => {
+                    return {
+                        Time: element.created_at,
+                        Lat: element.lat,
+                        Lng: element.lng,
+                    };
+                });
+                setCarbonDioxide(newData);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    };
+
+    useEffect(() => {
+        FetchCarbonDioxide()
+    }, [])
     return (
         <div className="h-full flex flex-col">
             <Header title="Carbon Dioxide (CO2)" />
@@ -68,8 +72,9 @@ const CarbonDioxide = () => {
                     TABLE
                 </button>
             </div>
-            {toggleView === "map" ? <Map data={carbon_dioxide} /> : null}
-            {toggleView === "table" ? <Table table_data={carbon_dioxide} /> : null}
+            {toggleView === "map" && carbonDioxide.length ? <Map data={carbonDioxide} /> : null}
+            {toggleView === "table" && carbonDioxide.length ? <Table data={carbonDioxide} /> : null}
+            {carbonDioxide.length < 1 ? <h1 className="text-3xl font-bold underline">No Data</h1> : null}
         </div>
     )
 }

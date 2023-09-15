@@ -1,16 +1,17 @@
 import { MapContainer, TileLayer, Popup, CircleMarker } from "react-leaflet";
 
-interface TableRow {
-    no: number;
+interface DataElement {
     Time: string;
     Lat: number;
     Lng: number;
 }
 
 interface props {
-    data: TableRow[];
+    data: DataElement[];
 }
+
 const Map = (properties: props) => {
+    console.log("Properties data: ", properties.data[0].Lat);
     const position: [number, number] = [properties.data[0].Lat, properties.data[0].Lng];
     return (
         <MapContainer center={position} zoom={20} scrollWheelZoom={true} style={{
