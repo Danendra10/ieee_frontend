@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Header from "../components/Header";
 import Map from "../components/Map";
 import Table from "../components/Table";
@@ -10,7 +10,7 @@ interface TableRow {
     Lng: number;
 }
 
-const carbon_monoxide: TableRow[] = [
+const azane: TableRow[] = [
     {
         no: 1,
         Time: "2023-09-09 12:00:00",
@@ -43,32 +43,11 @@ const carbon_monoxide: TableRow[] = [
     },
 ];
 
-const CarbonMonoxide = () => {
+const Azane = () => {
     const [toggleView, setToggleView] = useState("map");
-    // get "PORT" from env
-    const url: string = "http://localhost:" + (import.meta.env.VITE_BACKEND_PORT as string) +
-        (import.meta.env.VITE_AIR_POLUTION_END_POINT as string)
-    console.log(url)
-    const FetchCarbonMonoxide = () => {
-        fetch(url, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
-        })
-            .then(response => response.json()).then(data => {
-                console.log(data)
-            }).catch(error => {
-                console.error(error)
-            })
-    }
-
-    useEffect(() => {
-        FetchCarbonMonoxide()
-    })
     return (
         <div className="h-full flex flex-col">
-            <Header title="Carbon Monoxide (CO)" />
+            <Header title="Azane" />
             <div id="toggle" className="flex gap-x-2 mt-48 absolute z-10 left-[42%]
              border-[#1534E6] border-4 text-white w-fit rounded-full px-1 py-1 bg-white bg-opacity-50">
                 <button
@@ -89,10 +68,10 @@ const CarbonMonoxide = () => {
                     TABLE
                 </button>
             </div>
-            {toggleView === "map" ? <Map data={carbon_monoxide} /> : null}
-            {toggleView === "table" ? <Table table_data={carbon_monoxide} /> : null}
+            {toggleView === "map" ? <Map data={azane} /> : null}
+            {toggleView === "table" ? <Table table_data={azane} /> : null}
         </div>
     )
 }
 
-export default CarbonMonoxide;
+export default Azane;

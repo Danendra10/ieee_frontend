@@ -1,4 +1,5 @@
 import { react } from "../assets";
+import { Link } from "react-router-dom";
 
 interface sidebarProperties {
     logo: string;
@@ -14,41 +15,38 @@ function Sidebar({ isOpen, logo }: sidebarProperties) {
                 <nav className="-mx-3 space-y-6 ">
                     <div className="space-y-3 ">
                         <label className="px-3 text-xs text-white font-bold uppercase ">Compound</label>
-
-                        <a className="flex items-center px-3 py-2 text-white transition-colors duration-300 transform 
-                                    rounded-lg hover:text-gray-700" href="#">
+                        <Link to="/" className="flex items-center px-3 py-2 text-white transition-colors duration-300 transform 
+                                    rounded-lg hover:text-gray-700">
                             <img src={react} alt="" className="max-w-[18px]" />
-
                             <span className="mx-2 text-sm font-medium">Carbon Monoxide (CO)</span>
-                        </a>
-
-                        <a className="flex items-center px-3 py-2 text-white transition-colors duration-300 transform 
-                                    rounded-lg hover:text-gray-700" href="#">
+                        </Link>
+                        <Link className="flex items-center px-3 py-2 text-white transition-colors duration-300 transform 
+                                    rounded-lg hover:text-gray-700" to="/carbon-dioxide">
                             <img src={react} alt="" className="max-w-[18px]" />
 
                             <span className="mx-2 text-sm font-medium">Carbon Dioxide (CO<span className="text-[8px] text-end">2</span>)</span>
-                        </a>
+                        </Link>
 
-                        <a className="flex items-center px-3 py-2 text-white transition-colors duration-300 transform 
-                                    rounded-lg hover:text-gray-700" href="#">
+                        <Link className="flex items-center px-3 py-2 text-white transition-colors duration-300 transform 
+                                    rounded-lg hover:text-gray-700" to="/azane">
                             <img src={react} alt="" className="max-w-[18px]" />
 
                             <span className="mx-2 text-sm font-medium">Azane (NH<span className="text-[8px] text-end">3</span>)</span>
-                        </a>
+                        </Link>
 
-                        <a className="flex items-center px-3 py-2 text-white transition-colors duration-300 transform 
-                                    rounded-lg hover:text-gray-700" href="#">
+                        <Link className="flex items-center px-3 py-2 text-white transition-colors duration-300 transform 
+                                    rounded-lg hover:text-gray-700" to="/methana">
                             <img src={react} alt="" className="max-w-[18px]" />
 
                             <span className="mx-2 text-sm font-medium">Methana (NH<span className="text-[8px] text-end">4</span>)</span>
-                        </a>
+                        </Link>
 
-                        <a className="flex items-center px-3 py-2 text-white transition-colors duration-300 transform 
-                                    rounded-lg hover:text-gray-700" href="#">
+                        <Link className="flex items-center px-3 py-2 text-white transition-colors duration-300 transform 
+                                    rounded-lg hover:text-gray-700" to='/ozon'>
                             <img src={react} alt="" className="max-w-[18px]" />
 
                             <span className="mx-2 text-sm font-medium">Ozon (O<span className="text-[8px] text-end">4</span>)</span>
-                        </a>
+                        </Link>
                     </div>
                 </nav>
             </div>
